@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MKER 工数管理 App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">工数管理</p>
+          <h1>MKER 工数管理 App</h1>
+        </div>
+        <div class="header-actions">
+          <label class="file-upload">
+            <input id="importExcel" type="file" accept=".xlsx,.xls,.csv" />
+            Excel読込
+          </label>
+          <button id="exportExcelBtn" class="secondary">Excel出力</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel form-panel">
+          <h2>工数登録</h2>
+          <form id="timeForm">
+            <div class="field-grid">
+              <label>
+                <span>日付</span>
+                <input id="date" type="date" required />
+              </label>
+              <label>
+                <span>担当者</span>
+                <input id="member" type="text" placeholder="例: 山田" required />
+              </label>
+              <label>
+                <span>案件名</span>
+                <input id="project" type="text" placeholder="例: MKER開発" required />
+              </label>
+              <label>
+                <span>工程</span>
+                <input id="phase" type="text" placeholder="例: 設計 / 実装" required />
+              </label>
+              <label>
+                <span>区分</span>
+                <select id="taskType">
+                  <option value="開発">開発</option>
+                  <option value="検証">検証</option>
+                  <option value="会議">会議</option>
+                  <option value="調査">調査</option>
+                  <option value="資料作成">資料作成</option>
+                </select>
+              </label>
+              <label>
+                <span>工数（h）</span>
+                <input id="hours" type="number" min="0.25" max="24" step="0.25" value="1" required />
+              </label>
+            </div>
+            <label>
+              <span>詳細</span>
+              <textarea id="description" rows="3" placeholder="作業内容やメモ"></textarea>
+            </label>
+            <div class="actions">
+              <button type="submit" class="primary">登録</button>
+              <button type="reset" class="secondary" id="resetFormBtn">クリア</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel stats-panel">
+          <h2>集計</h2>
+          <div class="stats-grid">
+            <div class="stat-card accent">
+              <span>総工数</span>
+              <strong id="totalHours">0h</strong>
+            </div>
+            <div class="stat-card">
+              <span>今月</span>
+              <strong id="monthHours">0h</strong>
+            </div>
+            <div class="stat-card">
+              <span>担当者数</span>
+              <strong id="memberCount">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>案件数</span>
+              <strong id="projectCount">0</strong>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <label>
+              <span>月</span>
+              <input id="monthFilter" type="month" />
+            </label>
+            <label>
+              <span>担当者</span>
+              <select id="memberFilter">
+                <option value="all">全員</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="summary-box">
+            <h3>担当者別集計</h3>
+            <div id="memberSummary" class="summary-list"></div>
+          </div>
+        </section>
+      </main>
+      <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyCbHKrzy4CfKViCSgCF6rOuidqLuJbfldA",
+          authDomain: "my-work-app-001-29318.firebaseapp.com",
+          databaseURL: "https://my-work-app-001-29318-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "my-work-app-001-29318",
+          storageBucket: "my-work-app-001-29318.firebasestorage.app",
+          messagingSenderId: "1019862097993",
+          appId: "1:1019862097993:web:c8e2403a5bdb6007ebdf98"
+        };
+      </script>
+      <section class="panel list-panel">
+        <div class="table-header">
+          <h2>工数一覧</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>日付</th>
+                <th>担当者</th>
+                <th>案件</th>
+                <th>工程</th>
+                <th>区分</th>
+                <th>工数</th>
+                <th>詳細</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="entryTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
